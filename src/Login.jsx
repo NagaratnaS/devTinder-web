@@ -1,20 +1,28 @@
 import axios from "axios";
 import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { addUser } from "./utils/userSlice";
+import { useNavigate } from "react-router-dom";
+import { API_BASE_URL } from "./utils/constants";
 
 const Login = () => {
   const [emailId, setEmailId] = useState("");
   const [passWord, setPassWord] = useState("");
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const handleLogin = async () => {
     try {
       const res = await axios.post(
-        "http://localhost:8080/api/v1/auth/login",
+        API_BASE_URL + "/auth/login",
         {
           emailId,
           passWord,
         },
         { withCredentials: true },
       );
+      dispatch(addUser(res.data));
+      return navigate("/feed");
     } catch (error) {
       console.log("Login failed:", error);
     }
