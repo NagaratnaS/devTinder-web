@@ -8,6 +8,7 @@ import { API_BASE_URL } from "../utils/constants";
 const Login = () => {
   const [emailId, setEmailId] = useState("");
   const [passWord, setPassWord] = useState("");
+  const [error, setError] = useState("");
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -24,7 +25,8 @@ const Login = () => {
       dispatch(addUser(res.data));
       return navigate("/feed");
     } catch (error) {
-      console.log("Login failed:", error);
+      setError(error.response?.data || "Login failed. Please try again.");
+      console.error("Login failed:", error);
     }
   };
 
@@ -58,6 +60,7 @@ const Login = () => {
               ></input>
             </label>
           </div>
+          <p className="text-red-500">{error}</p>
           <div className="card-actions justify-center m-2">
             <button className="btn btn-primary" onClick={handleLogin}>
               Login
