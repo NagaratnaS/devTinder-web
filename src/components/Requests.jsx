@@ -1,38 +1,39 @@
 import axios from "axios";
-import { API_BASE_URL } from "../utils/constants";
-import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { addConnections } from "../utils/connectionSlice";
+import { API_BASE_URL } from "../utils/constants";
+import { addRequests } from "../utils/requestSlice";
+import { useEffect } from "react";
 
-const Connections = () => {
+const Requests = () => {
+  const requests = useSelector((state) => state.requests);
   const dispatch = useDispatch();
-  const connections = useSelector((state) => state.connections);
-  const fetchConnections = async () => {
+  const fetchRequests = async () => {
     try {
-      const response = await axios.get(API_BASE_URL + "/connections", {
+      const res = await axios.get(API_BASE_URL + "/user/requests/received", {
         withCredentials: true,
       });
-      dispatch(addConnections(response.data.data));
-      console.log(response.data.data);
-    } catch (err) {}
+      dispatch(addRequests(res.data));
+    } catch (error) {
+      console.error("Error fetching requests:", error);
+    }
   };
 
   useEffect(() => {
-    fetchConnections();
+    fetchRequests();
   }, []);
 
-  if (!connections) return;
+  if (!requests) return;
 
-  if (connections.length === 0) {
-    return <h1 className="text-bold text-2xl">No Connections Found!!!!</h1>;
+  if (requests.length === 0) {
+    return <h1 className="text-bold text-2xl">No Requests Found!!!!</h1>;
   }
 
   return (
     <div className="flex justify-center my-10 text-center">
-      <h1 className="text-bold text-white text-3xl">Connections</h1>
-      {connections.map((connection) => {
+      <h1 className="text-bold text-white text-3xl">Requests</h1>
+      {requests.map((request) => {
         const { _id, firstName, lastName, photoUrl, age, gender, about } =
-          connection;
+          request.fromUserId;
         return (
           <div
             key={_id}
@@ -63,4 +64,4 @@ const Connections = () => {
   );
 };
 
-export default Connections;
+export default Requests;
